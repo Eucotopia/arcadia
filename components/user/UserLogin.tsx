@@ -6,7 +6,7 @@ import {
     ModalBody,
     Button,
     useDisclosure,
-    Input, Checkbox,
+    Input, Checkbox, Dropdown, DropdownTrigger, Avatar, DropdownMenu, DropdownItem,
 } from "@nextui-org/react";
 import {LoginRequest} from "@/types";
 import {
@@ -18,8 +18,12 @@ import {
 import {Link} from "@nextui-org/link";
 import {useAppDispatch} from "@/types/store";
 import {setCredentials} from "@/features/auth/authSlice";
+import {useLoginMutation} from "@/features/api/authApi";
+import {useAuth} from "@/hooks/useAuth";
+import {NavbarContent} from "@nextui-org/navbar";
 
 export default function App() {
+    const {currentUser} = useAuth()
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const dispatch = useAppDispatch()
 
@@ -28,7 +32,7 @@ export default function App() {
         password: '',
     })
     const validateEmail = (value: string) => value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-
+    const [login, {isLoading}] = useLoginMutation()
     const isInvalid = useMemo(() => {
         if (formState.username === "") return false;
         return !validateEmail(formState.username);
@@ -39,24 +43,52 @@ export default function App() {
         ...prev,
         [name]: value
     }))
-
-    const Login = async () => {
-        dispatch(setCredentials({
-            id: 1,
-            nickname: "string",
-            username: "string",
-            token: "string",
-            image: "string"
-        }))
-    }
     return (
         <>
-            <Button
-                variant="flat"
-                className="text-sm font-normal text-default-600 bg-default-100"
-                onPress={onOpen}
-                color="primary"
-            >Login</Button>
+            {
+                currentUser ?
+                    (
+                        <NavbarContent as="div" justify="end">
+                            <Dropdown placement="bottom-end">
+                                <DropdownTrigger>
+                                    <Avatar
+                                        isBordered
+                                        as="button"
+                                        className="transition-transform"
+                                        color="secondary"
+                                        name={currentUser.nickname}
+                                        size="sm"
+                                        src={currentUser.image}
+                                    />
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Profile Actions" variant="flat">
+                                    <DropdownItem key="profile" className="h-14 gap-2">
+                                        <p className="font-semibold">Signed in as</p>
+                                        <p className="font-semibold">{currentUser.nickname}</p>
+                                    </DropdownItem>
+                                    <DropdownItem key="settings">My Settings</DropdownItem>
+                                    <DropdownItem key="team_settings">Team Settings</DropdownItem>
+                                    <DropdownItem key="analytics">Analytics</DropdownItem>
+                                    <DropdownItem key="system">System</DropdownItem>
+                                    <DropdownItem key="configurations">Configurations</DropdownItem>
+                                    <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+                                    <DropdownItem key="logout" color="danger" onClick={() => {
+                                        dispatch(setCredentials(null))
+                                    }}>
+                                        Log Out
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </NavbarContent>) :
+                    (
+                        <Button
+                            variant="flat"
+                            className="text-sm font-normal text-default-600 bg-default-100"
+                            onPress={onOpen}
+                            color="primary"
+                        >Login</Button>
+                    )
+            }
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -64,7 +96,7 @@ export default function App() {
                 placement="top-center"
             >
                 <ModalContent>
-                    {() => (
+                    {(onClose: any) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1 items-center">Log in Eucotopia</ModalHeader>
                             <ModalBody>
@@ -124,7 +156,12 @@ export default function App() {
                                         <Button
                                             isIconOnly color="primary"
                                             variant={"shadow"}
-                                            onClick={Login}
+                                            onClick={async () => {
+                                                const user = await login(formState).unwrap()
+                                                dispatch(setCredentials(user?.data))
+                                                onClose()
+                                            }}
+                                            isLoading={isLoading}
                                         >
                                             <SendFilledIcon/>
                                         </Button>

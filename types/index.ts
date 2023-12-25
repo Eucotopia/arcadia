@@ -16,3 +16,9 @@ export type UserV0 = {
     token: string
     image: string
 }
+
+export type ResultResponse<T> = {
+    code: number
+    message: string
+    data: T
+}

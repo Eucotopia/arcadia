@@ -31,6 +31,7 @@ import {
 
 import {Logo} from "@/components/icons";
 import React from "react";
+import {useAuth} from "@/hooks/useAuth";
 
 export const Navbar = () => {
     const searchInput = (
@@ -111,6 +112,7 @@ export const Navbar = () => {
                     </Button>
                 </NavbarItem>
                 <NavbarItem className="hidden lg:flex">
+
                     <UserLogin/>
                 </NavbarItem>
             </NavbarContent>

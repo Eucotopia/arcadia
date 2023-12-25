@@ -14,7 +14,6 @@ const AuthSlice = createSlice({
         removeCredentials: (state) => {
             state.user = null
         }
-
     },
     extraReducers: (builder) => {
     },

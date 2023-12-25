@@ -3,6 +3,7 @@ import storage from 'redux-persist/lib/storage'
 import authReducer from "@/features/auth/authSlice";
 // defaults to localStorage for web
 import {configureStore, combineReducers} from "@reduxjs/toolkit";
+import {authApi} from "@/features/api/authApi";
 // 定义配置信息
 const persistConfig = {
     key: "root",
@@ -14,7 +15,7 @@ const rootReducer = combineReducers({
     auth: authReducer,
     // post: postReducer,
     // [postApi.reducerPath]: postApi.reducer,
-    // [authApi.reducerPath]: authApi.reducer,
+    [authApi.reducerPath]: authApi.reducer,
 })
 // 创建持久化的配置persist的信息
 const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -24,7 +25,7 @@ export const store = configureStore({
     devTools: process.env.NODE_ENV !== 'production',
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,
-    })
+    }).concat(authApi.middleware)
 })
 export const persistor = persistStore(store)
 // Infer the `RootState` and `AppDispatch` types from the store itself
