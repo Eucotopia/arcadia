@@ -21,6 +21,7 @@ import {setCredentials} from "@/features/auth/authSlice";
 import {useLoginMutation} from "@/features/api/authApi";
 import {useAuth} from "@/hooks/useAuth";
 import {NavbarContent} from "@nextui-org/navbar";
+import {Simulate} from "react-dom/test-utils";
 
 export default function App() {
     const {currentUser} = useAuth()
@@ -43,11 +44,14 @@ export default function App() {
         ...prev,
         [name]: value
     }))
+
+
     return (
         <>
             {
                 currentUser ?
                     (
+                        //TODO 需要完善
                         <NavbarContent as="div" justify="end">
                             <Dropdown placement="bottom-end">
                                 <DropdownTrigger>
@@ -55,9 +59,9 @@ export default function App() {
                                         isBordered
                                         as="button"
                                         className="transition-transform"
-                                        color="secondary"
+                                        color="success"
                                         name={currentUser.nickname}
-                                        size="sm"
+                                        size={"sm"}
                                         src={currentUser.image}
                                     />
                                 </DropdownTrigger>
@@ -82,8 +86,8 @@ export default function App() {
                         </NavbarContent>) :
                     (
                         <Button
-                            variant="flat"
-                            className="text-sm font-normal text-default-600 bg-default-100"
+                            variant="shadow"
+                            size="sm"
                             onPress={onOpen}
                             color="primary"
                         >Login</Button>
@@ -100,7 +104,16 @@ export default function App() {
                         <>
                             <ModalHeader className="flex flex-col gap-1 items-center">Log in Eucotopia</ModalHeader>
                             <ModalBody>
-                                <form className="flex flex-col gap-4 h-[300px]">
+                                <form
+                                    className="flex flex-col gap-4 h-[300px]"
+                                    onKeyDown={async (e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault()
+                                            const user = await login(formState).unwrap()
+                                            dispatch(setCredentials(user?.data))
+                                            onClose()
+                                        }
+                                    }}>
                                     <Input
                                         isRequired
                                         autoFocus
@@ -139,6 +152,7 @@ export default function App() {
                                         onChange={handleChange}
                                         type={isVisible ? "text" : "password"}
                                         variant="bordered"
+
                                     />
                                     <div className="flex py-2 px-1 justify-between">
                                         <Checkbox
