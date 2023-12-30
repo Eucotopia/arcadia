@@ -108,10 +108,10 @@ export const ExtensionKit = () => [
             })
         },
     }),
-    Emoji.configure({
-        enableEmoticons: true,
-        suggestion: emojiSuggestion,
-    }),
+    // Emoji.configure({
+    //     enableEmoticons: true,
+    //     suggestion: emojiSuggestion,
+    // }),
     TextAlign.extend({
         addKeyboardShortcuts() {
             return {}

@@ -19,11 +19,15 @@ const ToolbarWrapper = forwardRef<HTMLDivElement, ToolbarWrapperProps>(
         )
 
         return (
-            shouldShowContent && (
-                <Surface className={toolbarClassName} {...rest} ref={ref}>
-                    {children}
-                </Surface>
-            )
+            <>
+                {
+                    shouldShowContent && (
+                        <Surface className={toolbarClassName} {...rest} ref={ref}>
+                            {children}
+                        </Surface>
+                    )
+                }
+            </>
         )
     },
 )

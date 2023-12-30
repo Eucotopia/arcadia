@@ -1,7 +1,7 @@
 import {Editor} from '@tiptap/react'
 
 import {Figcaption, HorizontalRule, ImageBlock, ImageUpload, Link, CodeBlock} from '@/tiptap/extensions'
-import {TableOfContentNode} from '@/tiptap/extensions/TableOfContentNode/'
+import {TableOfContentNode} from '@/tiptap/extensions/TableOfContentNode'
 
 export const isTableGripSelected = (node: HTMLElement) => {
     let container = node
