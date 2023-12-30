@@ -12,8 +12,7 @@ import {Button} from "@nextui-org/button";
 import {Kbd} from "@nextui-org/kbd";
 import {Link} from "@nextui-org/link";
 import {Input} from "@nextui-org/input";
-import UserLogin from "@/components/user/UserLogin";
-
+import UserLogin from "@/components/user/UserLogin"
 import {link as linkStyles} from "@nextui-org/theme";
 
 import {siteConfig} from "@/config/site";
@@ -30,10 +29,21 @@ import {
 } from "@/components/icons";
 
 import {Logo} from "@/components/icons";
-import React from "react";
-import {useAuth} from "@/hooks/useAuth";
+import {Activity, ChevronDown, Flash, Lock, Scale, Server, TagUser} from "@nextui-org/shared-icons";
+import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/react";
+import {useState} from "react";
 
 export const Navbar = () => {
+    const [isActive, setIsActive] = useState<string>("Home")
+    const icons = {
+        chevron: <ChevronDown fill="currentColor" size={16}/>,
+        scale: <Scale className="text-warning" fill="currentColor" size={30}/>,
+        lock: <Lock className="text-success" fill="currentColor" size={30}/>,
+        activity: <Activity className="text-secondary" fill="currentColor" size={30}/>,
+        flash: <Flash className="text-primary" fill="currentColor" size={30}/>,
+        server: <Server className="text-success" fill="currentColor" size={30}/>,
+        user: <TagUser className="text-danger" fill="currentColor" size={30}/>,
+    };
     const searchInput = (
         <Input
             aria-label="Search"
@@ -56,100 +66,159 @@ export const Navbar = () => {
     );
 
     return (
-        <NextUINavbar maxWidth="sm" position="sticky" height="48px">
-            <NavbarContent className="basis-1/5 sm:basis-full rounded-full mt-4 bg-neutral-300" justify="center">
+        <NextUINavbar maxWidth="xl" position={"sticky"} shouldHideOnScroll>
+            <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
                 <NavbarBrand as="li" className="gap-3 max-w-fit">
-                    <NextLink className="flex justify-start items-center gap-1" href="/">
+                    <NextLink className="flex justify-start items-center gap-1" href="/"
+                              onClick={() => setIsActive("Home")}>
                         <Logo/>
                         <p className="font-bold text-inherit">ACME</p>
                     </NextLink>
                 </NavbarBrand>
                 <ul className="hidden lg:flex gap-4 justify-start ml-2">
                     {siteConfig.navItems.map((item) => (
-                        <NavbarItem key={item.href}>
+                        <NavbarItem key={item.href} isActive={item.label === isActive}>
                             <Link
                                 isBlock
                                 className={clsx(
                                     linkStyles({color: "foreground"}),
-                                    "data-[active=true]:text-primary data-[active=true]:font-medium"
+                                    "data-[active=true]:text-success data-[active=true]:font-medium",
+                                    isActive === item.label && "text-primary font-bold "
                                 )}
                                 color="foreground"
                                 href={item.href}
+                                onClick={() => setIsActive(item.label)}
                             >
                                 {item.label}
                             </Link>
                         </NavbarItem>
                     ))}
                 </ul>
-                <NavbarItem className="hidden lg:flex">
+                <Dropdown>
+                    <NavbarItem>
+                        <DropdownTrigger>
+                            <Button
+                                disableRipple
+                                className="p-0 bg-transparent data-[hover=true]:bg-transparent mt-0.5 text-medium "
+                                endContent={icons.chevron}
+                                radius="sm"
+                                variant="light"
+                            >
+                                Features
+                            </Button>
+                        </DropdownTrigger>
+                    </NavbarItem>
+                    <DropdownMenu
+                        aria-label="ACME features"
+                        className="w-[340px]"
+                        itemClasses={{
+                            base: "gap-4",
+                        }}
+                    >
+                        <DropdownItem
+                            key="autoscaling"
+                            description="ACME scales apps to meet user demand, automagically, based on load."
+                            startContent={icons.scale}
+                        >
+                            Autoscaling
+                        </DropdownItem>
+                        <DropdownItem
+                            key="usage_metrics"
+                            description="Real-time metrics to debug issues. Slow query added? We’ll show you exactly where."
+                            startContent={icons.activity}
+                        >
+                            Usage Metrics
+                        </DropdownItem>
+                        <DropdownItem
+                            key="production_ready"
+                            description="ACME runs on ACME, join us and others serving requests at web scale."
+                            startContent={icons.flash}
+                        >
+                            Production Ready
+                        </DropdownItem>
+                        <DropdownItem
+                            key="99_uptime"
+                            description="Applications stay on the grid with high availability and high uptime guarantees."
+                            startContent={icons.server}
+                        >
+                            +99% Uptime
+                        </DropdownItem>
+                        <DropdownItem
+                            key="supreme_support"
+                            description="Overcome any challenge with a supporting team ready to respond."
+                            startContent={icons.user}
+                        >
+                            +Supreme Support
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+
+            </NavbarContent>
+
+            <NavbarContent
+                className="hidden sm:flex basis-1/5 sm:basis-full"
+                justify="end"
+            >
+                <NavbarItem className="hidden sm:flex gap-2">
+                    <Link isExternal href={siteConfig.links.twitter} aria-label="Twitter">
+                        <TwitterIcon className="text-default-500"/>
+                    </Link>
+                    <Link isExternal href={siteConfig.links.discord} aria-label="Discord">
+                        <DiscordIcon className="text-default-500"/>
+                    </Link>
+                    <Link isExternal href={siteConfig.links.github} aria-label="Github">
+                        <GithubIcon className="text-default-500"/>
+                    </Link>
+                    <ThemeSwitch/>
+                </NavbarItem>
+                <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
+                <NavbarItem className="hidden md:flex">
+                    <Button
+                        isExternal
+                        as={Link}
+                        className="text-sm font-normal text-default-600 bg-default-100"
+                        href={siteConfig.links.sponsor}
+                        startContent={<HeartFilledIcon className="text-danger"/>}
+                        variant="flat"
+                    >
+                        Sponsor
+                    </Button>
+                </NavbarItem>
+                <NavbarItem className={"hidden md:flex ml-4"}>
                     <UserLogin/>
                 </NavbarItem>
             </NavbarContent>
 
-            {/*<NavbarContent*/}
-            {/*    className="hidden sm:flex basis-1/5 sm:basis-full"*/}
-            {/*    justify="end"*/}
-            {/*>*/}
-            {/*    <NavbarItem className="hidden sm:flex gap-2">*/}
-            {/*        <Link isExternal href={siteConfig.links.twitter} aria-label="Twitter">*/}
-            {/*            <TwitterIcon className="text-default-500"/>*/}
-            {/*        </Link>*/}
-            {/*        <Link isExternal href={siteConfig.links.discord} aria-label="Discord">*/}
-            {/*            <DiscordIcon className="text-default-500"/>*/}
-            {/*        </Link>*/}
-            {/*        <Link isExternal href={siteConfig.links.github} aria-label="Github">*/}
-            {/*            <GithubIcon className="text-default-500"/>*/}
-            {/*        </Link>*/}
-            {/*        <ThemeSwitch/>*/}
-            {/*    </NavbarItem>*/}
-            {/*    <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>*/}
-            {/*    <NavbarItem className="hidden md:flex">*/}
-            {/*        <Button*/}
-            {/*            isExternal*/}
-            {/*            as={Link}*/}
-            {/*            className="text-sm font-normal text-default-600 bg-default-100"*/}
-            {/*            href={siteConfig.links.sponsor}*/}
-            {/*            startContent={<HeartFilledIcon className="text-danger"/>}*/}
-            {/*            variant="flat"*/}
-            {/*        >*/}
-            {/*            Sponsor*/}
-            {/*        </Button>*/}
-            {/*    </NavbarItem>*/}
-            {/*    <NavbarItem className="hidden lg:flex">*/}
-            {/*        <UserLogin/>*/}
-            {/*    </NavbarItem>*/}
-            {/*</NavbarContent>*/}
+            <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+                <Link isExternal href={siteConfig.links.github} aria-label="Github">
+                    <GithubIcon className="text-default-500"/>
+                </Link>
+                <ThemeSwitch/>
+                <NavbarMenuToggle/>
+            </NavbarContent>
 
-            {/*<NavbarContent className="sm:hidden basis-1 pl-4" justify="end">*/}
-            {/*    <Link isExternal href={siteConfig.links.github} aria-label="Github">*/}
-            {/*        <GithubIcon className="text-default-500"/>*/}
-            {/*    </Link>*/}
-            {/*    <ThemeSwitch/>*/}
-            {/*    <NavbarMenuToggle/>*/}
-            {/*</NavbarContent>*/}
-
-            {/*<NavbarMenu>*/}
-            {/*    {searchInput}*/}
-            {/*    <div className="mx-4 mt-2 flex flex-col gap-2">*/}
-            {/*        {siteConfig.navMenuItems.map((item, index) => (*/}
-            {/*            <NavbarMenuItem key={`${item}-${index}`}>*/}
-            {/*                <Link*/}
-            {/*                    color={*/}
-            {/*                        index === 2*/}
-            {/*                            ? "primary"*/}
-            {/*                            : index === siteConfig.navMenuItems.length - 1*/}
-            {/*                                ? "danger"*/}
-            {/*                                : "foreground"*/}
-            {/*                    }*/}
-            {/*                    href="#"*/}
-            {/*                    size="lg"*/}
-            {/*                >*/}
-            {/*                    {item.label}*/}
-            {/*                </Link>*/}
-            {/*            </NavbarMenuItem>*/}
-            {/*        ))}*/}
-            {/*    </div>*/}
-            {/*</NavbarMenu>*/}
+            <NavbarMenu>
+                {searchInput}
+                <div className="mx-4 mt-2 flex flex-col gap-2">
+                    {siteConfig.navMenuItems.map((item, index) => (
+                        <NavbarMenuItem key={`${item}-${index}`}>
+                            <Link
+                                color={
+                                    index === 2
+                                        ? "primary"
+                                        : index === siteConfig.navMenuItems.length - 1
+                                            ? "danger"
+                                            : "foreground"
+                                }
+                                href="#"
+                                size="lg"
+                            >
+                                {item.label}
+                            </Link>
+                        </NavbarMenuItem>
+                    ))}
+                </div>
+            </NavbarMenu>
         </NextUINavbar>
     );
 };

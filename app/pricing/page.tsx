@@ -1,9 +1,10 @@
-import { title } from "@/components/primitives";
+import {title} from "@/components/primitives";
+import BlockEditor from "../../tiptap/components/BlockEditor/BlockEditor";
 
 export default function PricingPage() {
-	return (
-		<div>
-			<h1 className={title()}>Pricing</h1>
-		</div>
-	);
+    return (
+        <div>
+            <BlockEditor/>
+        </div>
+    );
 }

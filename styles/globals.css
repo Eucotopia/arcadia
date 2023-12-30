@@ -1,3 +1,21 @@
+@font-face {
+    font-family: "Chalk";
+    src: url("../icon/font/Chalk.ttf");
+}
+
+@font-face {
+    font-family: "helvetic";
+    src: url("../icon/font/Helvetic.ttc");
+}
+
+@font-face {
+    font-family: "AppleSystemUIFont";
+}
+
+@font-face {
+    font-family: "Xingkai SC";
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

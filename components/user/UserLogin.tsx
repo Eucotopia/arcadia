@@ -21,7 +21,6 @@ import {setCredentials} from "@/features/auth/authSlice";
 import {useLoginMutation} from "@/features/api/authApi";
 import {useAuth} from "@/hooks/useAuth";
 import {NavbarContent} from "@nextui-org/navbar";
-import {Simulate} from "react-dom/test-utils";
 
 export default function App() {
     const {currentUser} = useAuth()
@@ -58,8 +57,8 @@ export default function App() {
                                     <Avatar
                                         isBordered
                                         as="button"
+                                        color="primary"
                                         className="transition-transform"
-                                        color="success"
                                         name={currentUser.nickname}
                                         size={"sm"}
                                         src={currentUser.image}
@@ -86,8 +85,8 @@ export default function App() {
                         </NavbarContent>) :
                     (
                         <Button
-                            variant="shadow"
-                            size="sm"
+                            variant="flat"
+                            className="text-sm font-normal text-default-600"
                             onPress={onOpen}
                             color="primary"
                         >Login</Button>
