@@ -1,7 +1,5 @@
 'use client'
 
-import {HocuspocusProvider} from '@hocuspocus/provider'
-
 import {API} from '@/tiptap/lib/api'
 
 import {
